@@ -2,7 +2,8 @@
 <div id="add">
   <!-- 条件付きレンダリング -->
   <Home v-if="!isLogin"></Home>
-  <Editor v-if="isLogin"></Editor>
+  <!-- userDataをEditor.vueに引き渡し -->
+  <Editor v-if="isLogin" :user="userData"></Editor>
 </div>
 </template>
 
@@ -15,20 +16,23 @@ export default {
   name: 'app',
   data () {
     return {
-      isLogin: false // Home or Editor 画面切り替え
+      isLogin: false, // Home or Editor 画面切り替え
+      userData: null
     }
   },
   // createdは、Vue.jsがそのコンポーネントを作ったタイミングで、実行される。
   created: function() {
     firebase.auth().onAuthStateChanged(user => {
       console.log(user);
+
+      // thisはvueComponent
       if (user) {
         this.isLogin = true;
+        this.userData = user;
       } else {
         this.isLogin = false;
+        this.userData = null;
       }
-      console.log(this.isLogin);
-
     });
   },
   components: {
